@@ -1,0 +1,286 @@
+<!doctype html>
+<html>
+  <head>
+    <style>
+      body {
+        padding: 0;
+        margin: 0;
+      }
+      #appLoader {
+        height: 100px;
+      }
+      #loading {
+        padding-top: 100px;
+        margin: 0;
+        position: fixed;
+        background-color: #222223;
+        text-align: center;
+        width: 100%;
+        height: 100%;
+      }
+      #loading h3 {
+        color: white;
+      }
+    </style>
+    <meta charset="utf-8">
+
+    <!--
+    <meta http-equiv="Content-Security-Policy" content="default-src *; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval'">
+    <meta http-equiv="Content-Security-Policy" content="*">
+    -->
+
+    <meta http-equiv="Content-Security-Policy" 
+             content="default-src *; 
+                      style-src * 'self' 'unsafe-inline' 'unsafe-eval'; 
+                      script-src * 'self' 'unsafe-inline' 'unsafe-eval';">
+    <!--
+    <meta http-equiv="Content-Security-Policy" content="default-src *; style-src 'self' 'unsafe-inline'; script-src 'self' http://*.build.phonegap.com 'unsafe-inline' 'unsafe-eval'">
+    -->
+
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="msapplication-tap-highlight" content="no" />
+    <!-- WARNING: for iOS 7, remove the width=device-width and height=device-height attributes. See https://issues.apache.org/jira/browse/CB-4323 -->
+    <meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=medium-dpi" />
+    
+    <title>ng2Cordova | App with ng2-webpack</title>
+    <link rel="icon" type="image/x-icon" href="/img/favicon.ico">
+
+    <!--
+    <script type="text/javascript" src="pouchdb.511.min.js"></script>
+    -->
+
+    <script src="es6-shim.js"></script>
+    <!--
+    <script src="http://localhost:8081/target/target-script-min.js#lion"></script>
+    <script src="http://debug3.build.phonegap.com/client/#e9aef5a0-ca79-11e5-b0ee-22000a95029c"></script>
+    -->
+
+    <script type="text/javascript" src="pouchdb-5.2.2-prerelease.min.js"></script>
+    <!--
+    <script type="text/javascript" src="filer.min.js"></script>
+    -->
+
+
+    <!--
+  <script>
+    /*
+    The MIT License (MIT)
+    Copyright (c) 2015 Jonathan Smith
+    Permission is hereby granted, free of charge, to any person obtaining a copy
+    of this software and associated documentation files (the "Software"), to deal
+    in the Software without restriction, including without limitation the rights
+    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    copies of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:
+    The above copyright notice and this permission notice shall be included in all
+    copies or substantial portions of the Software.
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+    SOFTWARE.
+    */
+
+
+        var db = new window.PouchDB("todos", {
+            size: 1000,
+            skip_setup: true,
+            // auto_compaction: true,
+            live: true,
+            create_target: true,
+            revs_limit: 0,
+            adapter: 'websql'
+            // adapter: 'idb',
+            // storage: 'persistent'
+        });
+
+    (function showIndexedDbSize() {
+      // "use strict";
+      var db;
+      console.log("yoyoyo");
+      var storesizes = new Array();
+     
+      function openDatabase() {
+        // return false;
+        return new Promise(function(resolve, reject) {
+          //prompt for DB name
+          // var dbname = prompt('Please enter your Database Name', '');
+          var dbname = "_pouch_todos";
+
+          if (dbname !== null) {
+            var request = window.indexedDB.open(dbname);
+            request.onsuccess = function (event) {
+              db = event.target.result;
+              resolve(db.objectStoreNames);
+            };
+          }
+          
+        });
+      }
+     
+      function getObjectStoreData(storename) {
+        return new Promise(function(resolve, reject) {
+          var trans = db.transaction(storename, IDBTransaction.READ_ONLY);
+          var store = trans.objectStore(storename);
+          var items = [];
+          trans.oncomplete = function(evt) {
+            var szBytes = toSize(items);
+            var szMBytes = (szBytes / 1024 / 1024).toFixed(2);
+            storesizes.push({'Store Name': storename, 'Items': items.length,  'Size': szMBytes + 'MB (' + szBytes + ' bytes)'});
+            resolve();
+          };
+          var cursorRequest = store.openCursor();
+          cursorRequest.onerror = function(error) {
+            reject(error);
+          };
+          cursorRequest.onsuccess = function(evt) {                   
+            var cursor = evt.target.result;
+            if (cursor) {
+                items.push(cursor.value);
+                cursor.continue();
+            }
+          }
+        });
+      }
+     
+      function toSize(items) {
+        var size = 0;
+        for (var i = 0; i < items.length; i++) {
+            var objectSize = JSON.stringify(items[i]).length;
+            size += objectSize * 2;
+        }
+        return size;
+      }
+     
+      openDatabase().then(function(stores) {
+        var PromiseArray = [];
+        for (var i=0; i < stores.length; i++) {
+          PromiseArray.push(getObjectStoreData(stores[i]));    
+        }
+        Promise.all(PromiseArray).then(function() {
+           console.table(storesizes);
+        });
+        window.storesizes = storesizes;
+      });
+
+      window.openDatabase = openDatabase;
+      window.getObjectStoreData = getObjectStoreData;
+      window.showIndexedDbSize = showIndexedDbSize;
+    }());
+
+    // showIndexedDbSize();
+  </script>
+  -->
+
+<!--
+  <script>
+    // Request storage usage and capacity left
+    //the type can be either TEMPORARY or PERSISTENT
+    window.webkitStorageInfo.queryUsageAndQuota(webkitStorageInfo.PERSISTENT,
+      function(used, remaining) {
+        console.log("Used quota: " + used + ", remaining quota: " + remaining);
+      }, function(e) {
+        console.log('Error', e);
+      } );
+  </script>
+
+  <script>
+
+      var onInitFs = function(fs) {   
+        console.log("Opened file system: " + fs.name); 
+        console.log(fs);
+      } 
+      var usedQuotaCallback = function(used, remaining) {
+        console.log("Used quota: " + used + ", remaining quota: " + remaining);
+      }
+      
+      var errorCallback = function(a) {   
+        console.log(errorCallback);
+        console.log(a); 
+      } 
+
+      var errorHandler = function(a) {   
+        console.log(a); 
+      } 
+      
+
+      var requestedBytes = 1024*1024*280*1024*1024*1024 + (1024 * 1024);
+
+      navigator.webkitTemporaryStorage.requestQuota (
+      // navigator.webkitPersistentStorage.requestQuota (
+          requestedBytes, function(grantedBytes) {  
+            console.log("grantedBytes: " + grantedBytes/1024/1024 + " MB");
+            window.webkitRequestFileSystem(TEMPORARY, grantedBytes, onInitFs, errorHandler);  // TEMPORARY // PERSISTENT
+
+          }, function(e) { console.log('Error', e); }
+      );
+
+      
+
+      // Request storage usage and capacity left
+      window.webkitStorageInfo.queryUsageAndQuota(webkitStorageInfo.TEMPORARY, //the type can be either TEMPORARY or PERSISTENT
+        usedQuotaCallback, 
+        errorCallback);
+
+
+      // Request Quota (only for File System API)  
+      window.webkitStorageInfo.requestQuota(PERSISTENT, 1024*1024, function(grantedBytes) {
+        window.webkitRequestFileSystem(PERSISTENT, grantedBytes, onInitFs, errorHandler); 
+      }, function(e) {
+        console.log('Error', e); 
+      });
+
+
+  </script>
+    -->
+
+    <!--
+    <script>
+    var base64 = {};
+      base64.unescape = function unescape (str) {
+        return (str + Array(5 - str.length % 4)
+          .join('='))
+          .replace(/\-/g, '+')
+          .replace(/_/g, '/');
+      };
+
+      base64.escape = function escape (str) {
+        return str.replace(/\+/g, '-')
+          .replace(/\//g, '_')
+          .replace(/=/g, '');
+      };
+
+      base64.encode = function encode (str) {
+        return this.escape(new Buffer(str).toString('base64'));
+      };
+
+      base64.decode = function decode (str) {
+        return new Buffer(this.unescape(str), 'base64').toString();
+      };
+      window.base64 = base64;
+    </script>
+    -->
+
+
+
+  </head>
+
+
+  <body>
+    
+    <app>
+      <div id="loading" style="display:none;">
+        <h3>L-ION mobile (0.9 alpha)</h3>
+        <div id="debugging" style="float:none;clear:both;color:#fff;height:100px;color:#909090;font-size:10px;overflow-y:auto;background-color:#111;border:0px 1px solid #fff;">
+          WELCOME <br/>
+        </div>
+        <img id="appLoader" src="./assets/loading.svg" alt="Loading icon"/>
+      </div>
+    </app>
+
+    <script type="text/javascript" src="cordova.js"></script>
+
+  <script src="./js/common.js?e2878860ef71e0325a13"></script><script src="./js/vendor.js?e2878860ef71e0325a13"></script><script src="./js/app.js?e2878860ef71e0325a13"></script></body>
+</html>
